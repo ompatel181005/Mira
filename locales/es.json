@@ -3,6 +3,7 @@
   "app.tagline": "Encuentra atención, reduce costos, entiende tus documentos y obtén ayuda con trámites — todo en un solo lugar.",
   "home.choose": "¿Con qué necesita ayuda hoy?",
   "home.chooseHint": "Elija por dónde empezar. Puede cambiar de camino después.",
+  "home.searchPlaceholder": "Código postal o síntomas (ej. 60607 o dolor de pecho)",
   "home.careTitle": "Encuentre atención cerca de usted",
   "home.careHint": "Díganos dónde está y qué tipo de atención necesita. Buscaremos clínicas, hospitales y opciones de bajo costo cercanas.",
   "home.moreTitle": "Otras formas de recibir ayuda",

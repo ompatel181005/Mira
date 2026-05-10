@@ -12,6 +12,7 @@
   "common.mi": "{{count}} dặm",
   "home.choose": "Hôm nay bạn cần giúp đỡ điều gì?",
   "home.chooseHint": "Chọn một điểm bắt đầu. Bạn có thể thay đổi đường dẫn sau này.",
+  "home.searchPlaceholder": "Mã ZIP hoặc triệu chứng (ví dụ 60607 hoặc đau ngực)",
   "home.startKicker": "Bắt đầu từ đây để được chăm sóc",
   "home.careTitle": "Tìm dịch vụ chăm sóc gần bạn",
   "home.careHint": "Hãy cho chúng tôi biết bạn đang ở đâu và bạn cần loại hình chăm sóc nào. Chúng tôi sẽ tìm kiếm các phòng khám, bệnh viện gần đó và các lựa chọn chi phí thấp.",

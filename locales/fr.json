@@ -12,6 +12,7 @@
   "common.mi": "{{count}} mi",
   "home.choose": "Pour quoi avez-vous besoin d’aide aujourd’hui?",
   "home.chooseHint": "Choisissez un point de départ. Vous pourrez changer de chemin plus tard.",
+  "home.searchPlaceholder": "Code postal ou symptômes (ex. 60607 ou douleur thoracique)",
   "home.startKicker": "Commencez ici pour les soins",
   "home.careTitle": "Trouvez care près de vous",
   "home.careHint": "Dites-nous où vous êtes et de quels types de soins vous avez besoin. Nous rechercherons des cliniques, des hôpitaux et des options à faible coût à proximité.",

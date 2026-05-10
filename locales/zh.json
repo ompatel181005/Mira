@@ -12,6 +12,7 @@
   "common.mi": "{{count}} 英里",
   "home.choose": "今天您需要什么帮助？",
   "home.chooseHint": "选择一个起点。您可以稍后更改路径。",
+  "home.searchPlaceholder": "邮编或症状(例如 60607 或胸痛)",
   "home.startKicker": "从这里开始护理",
   "home.careTitle": "查找您附近的护理",
   "home.careHint": "告诉我们您在哪里以及您需要什么样的护理。我们将寻找附近的诊所、医院和低成本选择。",

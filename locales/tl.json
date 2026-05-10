@@ -12,6 +12,7 @@
   "common.mi": "{{count}} mi",
   "home.choose": "Ano ang kailangan mo ng tulong ngayon?",
   "home.chooseHint": "Pumili ng panimulang punto. Maaari mong baguhin ang mga landas sa ibang pagkakataon.",
+  "home.searchPlaceholder": "ZIP code o sintomas (hal. 60607 o pananakit ng dibdib)",
   "home.startKicker": "Magsimula dito para sa pangangalaga",
   "home.careTitle": "Maghanap ng pangangalaga na malapit sa iyo",
   "home.careHint": "Sabihin sa amin kung nasaan ka at kung anong uri ng pangangalaga ang kailangan mo. Maghahanap kami ng mga kalapit na klinika, ospital, at mga opsyon sa murang halaga.",

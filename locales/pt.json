@@ -12,6 +12,7 @@
   "common.mi": "{{count}} milhas",
   "home.choose": "Em que você precisa de ajuda hoje?",
   "home.chooseHint": "Escolha um ponto de partida. Você pode alterar os caminhos mais tarde.",
+  "home.searchPlaceholder": "CEP ou sintomas (ex. 60607 ou dor no peito)",
   "home.startKicker": "Comece aqui para cuidar",
   "home.careTitle": "Encontre atendimento perto de você",
   "home.careHint": "Diga-nos onde você está e que tipo de cuidados você precisa. Procuraremos clínicas, hospitais próximos e opções de baixo custo.",

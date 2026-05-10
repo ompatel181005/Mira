@@ -1,0 +1,50 @@
+[
+  {
+    "generic": "insulin glargine",
+    "brand": "Lantus",
+    "manufacturer": "Sanofi",
+    "program_name": "Sanofi Patient Connection",
+    "enrollment_url": "https://www.sanofipatientconnection.com",
+    "notes": "For uninsured patients ≤400% FPL"
+  },
+  {
+    "generic": "insulin lispro",
+    "brand": "Humalog",
+    "manufacturer": "Eli Lilly",
+    "program_name": "Lilly Cares Foundation",
+    "enrollment_url": "https://www.lillycares.com",
+    "notes": "For uninsured patients ≤400% FPL"
+  },
+  {
+    "generic": "insulin aspart",
+    "brand": "NovoLog",
+    "manufacturer": "Novo Nordisk",
+    "program_name": "Novo Nordisk Patient Assistance Program",
+    "enrollment_url": "https://www.novocare.com/diabetes/help-with-costs/pap.html",
+    "notes": "For uninsured patients ≤400% FPL"
+  },
+  {
+    "generic": "atorvastatin",
+    "brand": "Lipitor",
+    "manufacturer": "Pfizer",
+    "program_name": "Pfizer RxPathways",
+    "enrollment_url": "https://www.pfizerrxpathways.com",
+    "notes": "Generic widely available — PAP rarely needed"
+  },
+  {
+    "generic": "duloxetine",
+    "brand": "Cymbalta",
+    "manufacturer": "Eli Lilly",
+    "program_name": "Lilly Cares Foundation",
+    "enrollment_url": "https://www.lillycares.com",
+    "notes": "Generic available; PAP for brand only"
+  },
+  {
+    "generic": "albuterol",
+    "brand": "ProAir",
+    "manufacturer": "Teva",
+    "program_name": "Teva Cares Foundation",
+    "enrollment_url": "https://www.tevacaresfoundation.com",
+    "notes": "Inhaler assistance available"
+  }
+]

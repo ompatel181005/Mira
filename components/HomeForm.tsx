@@ -3,213 +3,171 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n";
 import { loadForm, saveForm, type FormState } from "@/lib/session";
-import { detectEmergency, type EmergencyMatch } from "@/lib/emergency";
-import EmergencyBanner from "./EmergencyBanner";
+import { motion } from "framer-motion";
 import FeatureCard from "./FeatureCard";
-
-const CIRCS = ["pregnant", "children", "immigrant", "emergency"] as const;
-const INSURANCE = ["none", "medicaid", "private", "medicare"] as const;
 
 export default function HomeForm() {
   const { t, lang } = useT();
   const router = useRouter();
-  const [form, setForm] = useState<FormState>({
-    zip: "",
-    language: "en",
-    symptoms: "",
-    insurance: "",
-    circumstances: [],
-  });
-  const [emergency, setEmergency] = useState<EmergencyMatch | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [step, setStep] = useState<'idle' | 'searching'>('idle');
+  const [zip, setZip] = useState("");
 
+  // Hydrate from any prior session entry so the user doesn't re-enter ZIP.
   useEffect(() => {
-    const loaded = loadForm();
-    setForm({ ...loaded, language: lang });
-  }, [lang]);
+    const f = loadForm();
+    if (f.zip) setZip(f.zip);
+  }, []);
 
-  function toggleCirc(c: string) {
-    setForm((f) => ({
-      ...f,
-      circumstances: f.circumstances.includes(c)
-        ? f.circumstances.filter((x) => x !== c)
-        : [...f.circumstances, c],
-    }));
-  }
+  const startSearching = () => setStep('searching');
 
-  function validate(): string | null {
-    if (!/^\d{5}$/.test(form.zip)) return t("form.zip") + " (5 digits)";
-    if (!form.insurance) return t("form.insurance");
-    return null;
-  }
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const err = validate();
-    if (err) {
-      alert(err);
+  function persistAndGo(path: string) {
+    if (!/^\d{5}$/.test(zip)) {
+      alert(t("validation.zip5") || "Please enter a 5-digit ZIP code.");
       return;
     }
-    saveForm({ ...form, language: lang });
-    // Emergency check
-    let match = detectEmergency(form.symptoms, lang);
-    if (!match && form.circumstances.includes("emergency")) {
-      match = { category: "cardiac", severity: "critical", keyword_matched: "emergency" };
-    }
-    if (match) {
-      setEmergency(match);
-      // Don't block — user dismisses, we still navigate
-      return;
-    }
-    proceed();
-  }
-
-  function proceed() {
-    setSubmitting(true);
-    router.push("/care");
+    const prior = loadForm();
+    saveForm({ ...prior, zip, language: lang } as FormState);
+    router.push(path);
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
-      {emergency && (
-        <div className="lg:col-span-2">
-          <EmergencyBanner
-            match={emergency}
-            onDismiss={() => {
-              setEmergency(null);
-              proceed();
-            }}
+    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:py-20">
+      
+      {/* 1. HERO SECTION WITH ANIMATED DOCTOR BIRD */}
+      <section className="flex flex-col items-center text-center">
+        {/* The Animated Bird */}
+        <motion.div
+          animate={{ 
+            y: [0, -60, 0],
+            rotate: [-1, 3, -1]
+          }}
+          transition={{ 
+            duration: 4, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+          className="relative mb-6 h-90 w-90 drop-shadow-2xl"
+        >
+          <img 
+            src="/doctor-bird.png" 
+            alt="Doctor Bird Mascot" 
+            className="h-full w-full object-contain"
           />
-        </div>
-      )}
+        </motion.div>
 
-      <form onSubmit={onSubmit} className="ui-card p-5 sm:p-6 space-y-5">
-        <div>
-          <div className="page-kicker">Start here for care</div>
-          <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">{t("home.careTitle")}</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">{t("home.careHint")}</p>
-        </div>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl">
+          {t("app.kicker")}
+        </h1>
+        <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+          {t("app.tagline")}
+        </p>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="field-label">{t("form.zip")} *</label>
+        {/* Search-First Input */}
+        <div className="mt-10 w-full max-w-2xl px-2">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+              <span className="text-2xl">🔍</span>
+            </div>
             <input
               type="text"
               inputMode="numeric"
               maxLength={5}
-              pattern="\d{5}"
-              required
               placeholder={t("form.zipPlaceholder")}
-              value={form.zip}
-              onChange={(e) => setForm({ ...form, zip: e.target.value.replace(/\D/g, "") })}
-              className="field-input"
+              className="w-full rounded-3xl border-0 bg-white py-6 pl-16 pr-36 text-lg shadow-soft ring-1 ring-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-medical-600 transition-all"
+              onClick={startSearching}
+              value={zip}
+              onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
             />
-          </div>
-          <div>
-            <label className="field-label">{t("form.language")} *</label>
-            <select
-              value={lang}
-              onChange={(e) => {
-                const newLang = e.target.value as "en" | "es" | "ar";
-                window.sessionStorage.setItem("mira:lang", newLang);
-                window.dispatchEvent(new Event("mira:lang-change"));
-              }}
-              className="field-input"
+            <button
+              onClick={startSearching}
+              className="absolute right-3 top-2.5 bottom-2.5 px-8 rounded-2xl bg-medical-600 text-white font-bold text-sm hover:bg-medical-700 transition-all active:scale-95"
             >
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="ar">العربية</option>
-            </select>
+              {t("cta.findCare")}
+            </button>
           </div>
         </div>
+      </section>
 
-        <div>
-          <label className="field-label">{t("form.symptoms")}</label>
-          <textarea
-            rows={2}
-            placeholder={t("form.symptomsPlaceholder")}
-            value={form.symptoms}
-            onChange={(e) => setForm({ ...form, symptoms: e.target.value })}
-            className="field-input min-h-[88px]"
+      {/* 2. CARD-BASED DASHBOARD SECTION */}
+      <section className="mt-24">
+        <div className="mb-10 text-center sm:text-left">
+          <h2 className="text-2xl font-bold text-slate-900">{t("home.choose")}</h2>
+          <p className="text-slate-500 mt-1">{t("home.chooseHint")}</p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-3">
+          <FeatureCard
+            icon="🧾"
+            label={t("nav.lowerCosts")}
+            description={t("home.lowerCostsHint")}
+            active={false}
+            onClick={() => router.push("/costs")}
+          />
+          <FeatureCard
+            icon="📄"
+            label={t("nav.understandDocs")}
+            description={t("home.docsHint")}
+            active={false}
+            onClick={() => router.push("/docs")}
+          />
+          <FeatureCard
+            icon="🪪"
+            label={t("nav.getHelp")}
+            description={t("home.applyHint")}
+            active={false}
+            onClick={() => router.push("/apply")}
           />
         </div>
+      </section>
 
-        <div>
-          <span className="field-label">{t("form.insurance")} *</span>
-          <div className="flex flex-wrap gap-2">
-            {INSURANCE.map((ins) => (
-              <button
-                type="button"
-                key={ins}
-                onClick={() => setForm({ ...form, insurance: ins })}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
-                  form.insurance === ins
-                    ? "bg-teal-700 text-white border-teal-700 shadow-sm"
-                    : "bg-white border-slate-300 text-slate-700 hover:border-teal-300 hover:bg-teal-50"
-                }`}
+      {/* 3. CONVERSATIONAL STEP OVERLAY */}
+      {step === 'searching' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="w-full max-w-lg bg-white rounded-3xl p-10 shadow-2xl"
+          >
+             <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-2">
+                  <img src="/doctor-bird.png" className="w-8 h-8" alt="Bird" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-medical-600">Navigator Guide</span>
+                </div>
+                <button 
+                  onClick={() => setStep('idle')} 
+                  className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors"
+                >
+                  ✕
+                </button>
+             </div>
+             
+             <h3 className="text-3xl font-bold text-slate-900 mb-4 leading-tight">
+               {t("form.zip")}
+             </h3>
+             <p className="text-slate-500 mb-8">{t("home.careHint")}</p>
+
+             <input
+               autoFocus
+               type="text"
+               inputMode="numeric"
+               maxLength={5}
+               className="w-full text-5xl font-bold border-none focus:ring-0 outline-none py-4 mb-10 text-medical-600 placeholder:text-slate-100"
+               placeholder="00000"
+               value={zip}
+               onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
+               onKeyDown={(e) => { if (e.key === "Enter") persistAndGo("/care"); }}
+             />
+
+             <button
+                onClick={() => persistAndGo("/care")}
+                className="group w-full py-5 rounded-2xl bg-medical-600 text-white font-bold text-xl hover:bg-medical-700 transition-all shadow-lg shadow-medical-200 flex items-center justify-center gap-2"
               >
-                {t("form.insurance." + ins)}
+                {t("cta.findCare")}
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
               </button>
-            ))}
-          </div>
+          </motion.div>
         </div>
-
-        <div>
-          <span className="field-label">{t("form.circumstances")}</span>
-          <div className="flex flex-wrap gap-2">
-            {CIRCS.map((c) => (
-              <button
-                type="button"
-                key={c}
-                onClick={() => toggleCirc(c)}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
-                  form.circumstances.includes(c)
-                    ? "bg-slate-900 text-white border-slate-900 shadow-sm"
-                    : "bg-white border-slate-300 text-slate-700 hover:border-slate-400 hover:bg-slate-50"
-                }`}
-              >
-                {t("form.circ." + c)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="primary-button w-full py-3"
-        >
-          {t("cta.findCare")}
-        </button>
-      </form>
-
-      <aside className="space-y-3">
-        <div className="ui-card p-5">
-          <h2 className="text-lg font-semibold text-slate-950">{t("home.moreTitle")}</h2>
-          <p className="mt-1 text-sm leading-6 text-slate-600">{t("home.moreHint")}</p>
-        </div>
-        <FeatureCard
-          icon="🧾"
-          label={t("nav.lowerCosts")}
-          description={t("home.lowerCostsHint")}
-          active={false}
-          onClick={() => router.push("/costs")}
-        />
-        <FeatureCard
-          icon="📄"
-          label={t("nav.understandDocs")}
-          description={t("home.docsHint")}
-          active={false}
-          onClick={() => router.push("/docs")}
-        />
-        <FeatureCard
-          icon="🪪"
-          label={t("nav.getHelp")}
-          description={t("home.applyHint")}
-          active={false}
-          onClick={() => router.push("/apply")}
-        />
-      </aside>
+      )}
     </div>
   );
 }

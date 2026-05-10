@@ -1,0 +1,26 @@
+{
+  "en": {
+    "cardiac": ["chest pain", "heart attack", "crushing chest pressure", "left arm numb", "tightness in chest"],
+    "stroke": ["face drooping", "slurred speech", "sudden weakness", "stroke symptoms", "can't move arm"],
+    "respiratory": ["can't breathe", "choking", "blue lips", "gasping for air"],
+    "psychiatric": ["want to kill myself", "suicide", "end my life", "hurt myself", "kill myself"],
+    "obstetric": ["bleeding heavy pregnant", "water broke", "severe headache pregnant", "can't feel baby move"],
+    "anaphylactic": ["can't breathe and swelling", "throat closing", "anaphylaxis"]
+  },
+  "es": {
+    "cardiac": ["dolor de pecho", "ataque al corazón", "presión en el pecho", "brazo izquierdo entumecido"],
+    "stroke": ["cara caída", "habla arrastrada", "debilidad repentina", "sintomas de derrame"],
+    "respiratory": ["no puedo respirar", "ahogándome", "labios azules"],
+    "psychiatric": ["quiero matarme", "suicidarme", "terminar con mi vida", "hacerme daño"],
+    "obstetric": ["sangrado embarazada", "rompió fuente", "dolor de cabeza severo embarazada"],
+    "anaphylactic": ["garganta cerrándose", "anafilaxia"]
+  },
+  "ar": {
+    "cardiac": ["ألم في الصدر", "نوبة قلبية", "ضغط على الصدر"],
+    "stroke": ["تدلي الوجه", "تلعثم في الكلام", "ضعف مفاجئ"],
+    "respiratory": ["لا أستطيع التنفس", "اختناق", "شفاه زرقاء"],
+    "psychiatric": ["أريد قتل نفسي", "انتحار", "إنهاء حياتي"],
+    "obstetric": ["نزيف حامل", "نزل ماء الولادة"],
+    "anaphylactic": ["الحلق يغلق", "حساسية مفرطة"]
+  }
+}

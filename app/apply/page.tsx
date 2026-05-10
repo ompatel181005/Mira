@@ -28,6 +28,12 @@ type EligResp = {
   notes: string;
 };
 
+type FundraiserDraft = {
+  title: string;
+  story: string;
+  update: string;
+};
+
 function CopyButton({ text }: { text: string }) {
   const { t } = useT();
   const [copied, setCopied] = useState(false);
@@ -56,6 +62,8 @@ export default function ApplyPage() {
   const [result, setResult] = useState<CharityResp | null>(null);
   const [showMedicaid, setShowMedicaid] = useState(false);
   const [eligibility, setEligibility] = useState<EligResp | null>(null);
+  const [fundraiserGoal, setFundraiserGoal] = useState("");
+  const [fundraiserDetails, setFundraiserDetails] = useState("");
 
   useEffect(() => {
     const f = loadForm();
@@ -111,6 +119,35 @@ export default function ApplyPage() {
     if (result.verdict === "above") return t("apply.eligibilityAbove");
     return null;
   }, [result, t]);
+
+  const fundraiserDraft = useMemo<FundraiserDraft | null>(() => {
+    if (!result) return null;
+    const displayName = name.trim() || t("apply.fundraiser.defaultName");
+    const goal = fundraiserGoal ? Number(fundraiserGoal).toLocaleString() : "____";
+    const hospital = result.hospital.name;
+    const discountContext =
+      result.verdict === "full"
+        ? t("apply.fundraiser.fullContext")
+        : result.verdict === "partial"
+          ? t("apply.fundraiser.partialContext")
+          : t("apply.fundraiser.generalContext");
+    const details = fundraiserDetails.trim()
+      ? `\n\n${fundraiserDetails.trim()}`
+      : "";
+
+    return {
+      title: t("apply.fundraiser.generatedTitle").replace("{name}", displayName),
+      story: t("apply.fundraiser.story")
+        .replaceAll("{name}", displayName)
+        .replace("{hospital}", hospital)
+        .replace("{goal}", goal)
+        .replace("{context}", discountContext)
+        .replace("{details}", details),
+      update: t("apply.fundraiser.update")
+        .replace("{hospital}", hospital)
+        .replace("{phone}", result.hospital.phone),
+    };
+  }, [fundraiserDetails, fundraiserGoal, name, result, t]);
 
   return (
     <div className="page-shell max-w-4xl space-y-5">
@@ -218,6 +255,79 @@ export default function ApplyPage() {
             <a href={`tel:${result.hospital.phone}`} className="mt-2 inline-block text-brand-600 underline text-sm">
               📞 Call {result.hospital.phone}
             </a>
+          </div>
+        </div>
+      )}
+
+      {result && fundraiserDraft && (
+        <div className="ui-card p-5 space-y-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <div className="page-kicker">{t("apply.fundraiser.kicker")}</div>
+              <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">{t("apply.fundraiser.title")}</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{t("apply.fundraiser.body")}</p>
+            </div>
+            <a
+              href="https://www.gofundme.com/start"
+              target="_blank"
+              rel="noreferrer"
+              className="primary-button inline-block text-sm"
+            >
+              {t("apply.fundraiser.open")}
+            </a>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="field-label">{t("apply.fundraiser.goal")}</label>
+              <input
+                type="number"
+                min={0}
+                value={fundraiserGoal}
+                onChange={(e) => setFundraiserGoal(e.target.value)}
+                placeholder="e.g. 3500"
+                className="field-input"
+              />
+            </div>
+            <div>
+              <label className="field-label">{t("apply.fundraiser.note")}</label>
+              <input
+                value={fundraiserDetails}
+                onChange={(e) => setFundraiserDetails(e.target.value)}
+                placeholder={t("apply.fundraiser.notePlaceholder")}
+                className="field-input"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-3">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold">{t("apply.fundraiser.campaignTitle")}</h3>
+                <CopyButton text={fundraiserDraft.title} />
+              </div>
+              <p className="mt-2 text-sm text-slate-700">{fundraiserDraft.title}</p>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold">{t("apply.fundraiser.storyTitle")}</h3>
+                <CopyButton text={fundraiserDraft.story} />
+              </div>
+              <pre className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">{fundraiserDraft.story}</pre>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold">{t("apply.fundraiser.updateTitle")}</h3>
+                <CopyButton text={fundraiserDraft.update} />
+              </div>
+              <pre className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">{fundraiserDraft.update}</pre>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-teal-200 bg-teal-50 p-3 text-sm text-teal-950">
+            {t("apply.fundraiser.disclaimer")}
           </div>
         </div>
       )}

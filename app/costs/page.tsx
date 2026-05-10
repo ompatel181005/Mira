@@ -8,6 +8,7 @@ type MedResp = {
   generic: string | null;
   purpose: string | null;
   sources: { source: string; price: string | null; notes: string; action_label: string | null; url: string | null }[];
+  externalChecks?: { source: string; status: string; notes: string; action_label: string; url: string }[];
   paps: { generic: string; brand: string | null; manufacturer: string; program_name: string; enrollment_url: string; notes: string }[];
 };
 
@@ -101,35 +102,61 @@ export default function CostsPage() {
             )}
           </div>
 
-          <h3 className="font-semibold mt-2">{t("costs.priceTable")}</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
-                <tr>
-                  <th className="rounded-l-lg px-3 py-2">Source</th>
-                  <th className="px-3">Price</th>
-                  <th className="px-3">Notes</th>
-                  <th className="rounded-r-lg px-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {med.sources.map((s, i) => (
-                  <tr key={i} className="border-b border-slate-100 last:border-0">
-                    <td className="px-3 py-3 font-medium">{s.source}</td>
-                    <td className="px-3">{s.price || "—"}</td>
-                    <td className="px-3 text-slate-600">{s.notes}</td>
-                    <td className="px-3">
-                      {s.url && s.action_label && (
-                        <a href={s.url} target="_blank" rel="noreferrer" className="text-brand-600 underline text-sm">
-                          {s.action_label}
-                        </a>
-                      )}
-                    </td>
-                  </tr>
+          {med.sources.length > 0 && (
+            <>
+              <h3 className="font-semibold mt-2">{t("costs.priceTable")}</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
+                    <tr>
+                      <th className="rounded-l-lg px-3 py-2">Source</th>
+                      <th className="px-3">Price</th>
+                      <th className="px-3">Notes</th>
+                      <th className="rounded-r-lg px-3"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {med.sources.map((s, i) => (
+                      <tr key={i} className="border-b border-slate-100 last:border-0">
+                        <td className="px-3 py-3 font-medium">{s.source}</td>
+                        <td className="px-3 font-medium text-slate-900">{s.price || "Unavailable"}</td>
+                        <td className="px-3 text-slate-600">{s.notes}</td>
+                        <td className="px-3">
+                          {s.url && s.action_label && (
+                            <a href={s.url} target="_blank" rel="noreferrer" className="text-teal-700 underline text-sm font-medium">
+                              {s.action_label}
+                            </a>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+
+          {med.externalChecks && med.externalChecks.length > 0 && (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <h3 className="font-semibold">Other places to check</h3>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {med.externalChecks.map((check, i) => (
+                  <a
+                    key={i}
+                    href={check.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-lg border border-slate-200 bg-white p-3 text-sm shadow-sm transition hover:border-teal-300 hover:bg-teal-50"
+                  >
+                    <span className="block font-semibold text-slate-950">{check.source}</span>
+                    <span className="mt-1 block text-xs font-medium uppercase tracking-wide text-slate-500">{check.status}</span>
+                    <span className="mt-2 block text-slate-600">{check.notes}</span>
+                    <span className="mt-3 inline-block font-semibold text-teal-700 underline">{check.action_label}</span>
+                  </a>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </div>
+          )}
 
           {med.paps.length > 0 && (
             <div className="mt-3">

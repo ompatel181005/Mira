@@ -97,9 +97,9 @@ export default function HomeForm() {
       {/* HERO */}
       <section className="flex flex-col items-center text-center">
         <motion.div
-          animate={{ y: [0, -60, 0], rotate: [-1, 3, -1] }}
+          animate={{ y: [0, -12, 0], rotate: [-1, 2, -1] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="relative mb-6 h-90 w-90 drop-shadow-2xl"
+          className="relative -mb-2 h-48 w-48 sm:h-64 sm:w-64 lg:h-72 lg:w-72 drop-shadow-xl"
         >
           <img
             src="/doctor-bird.png"

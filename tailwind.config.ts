@@ -7,22 +7,34 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      borderRadius: {
+        '2xl': '1.25rem',
+        '3xl': '2rem', // The "Organic" look
+      },
       colors: {
         brand: {
-          50: "#eef7ff",
-          500: "#2563eb",
-          600: "#1d4ed8",
-          700: "#1e40af",
+          50: "#f0f9ff",
+          500: "#0ea5e9",
+          600: "#0284c7",
+          700: "#0369a1",
         },
-        teal: {
-          50: "#ecfdf9",
+        // Softer, more modern teals/greens
+        sage: {
+          50: "#f4f7f6",
+          100: "#e8efed",
+          500: "#5d8a82",
+          600: "#4a6e68",
+        },
+        medical: {
+          50: "#f0fdfa",
           100: "#ccfbef",
-          500: "#14b8a6",
           600: "#0d9488",
           700: "#0f766e",
-          800: "#115e59",
-        },
+        }
       },
+      boxShadow: {
+        'soft': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+      }
     },
   },
   plugins: [],

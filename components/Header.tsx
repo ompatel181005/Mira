@@ -1,24 +1,32 @@
 "use client";
-import Link from "next/link";
+import React from "react";
+import Image from "next/image";
 import LanguageToggle from "./LanguageToggle";
 import PrivacyBadge from "./PrivacyBadge";
 import TalkToReal from "./TalkToReal";
-import { useT } from "@/lib/i18n";
 
 export default function Header() {
-  const { t } = useT();
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-slate-950 text-lg">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-teal-700 text-sm font-bold text-white shadow-sm">
-            M
+    <header className="sticky top-0 z-40 w-full border-b border-slate-100 bg-white/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2">
+          {/* Your New Logo */}
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl">
+            <Image 
+              src="/logo.png" 
+              alt="MIRA Logo" 
+              fill 
+              className="object-cover"
+            />
+          </div>
+          <span className="text-xl font-bold tracking-tight text-slate-900">
+            MIRA <span className="font-medium text-slate-500 text-sm hidden sm:inline">Healthcare Navigator</span>
           </span>
-          <span>MIRA</span>
-        </Link>
-        <span className="hidden max-w-sm truncate text-sm text-slate-500 sm:inline">{t("app.title")}</span>
-        <div className="ms-auto flex items-center gap-2">
+        </div>
+
+        <div className="flex items-center gap-3">
           <PrivacyBadge />
+          <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />
           <TalkToReal />
           <LanguageToggle />
         </div>

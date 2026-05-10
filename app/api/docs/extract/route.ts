@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { claude, languageInstruction, POWERFUL_MODEL } from "@/lib/claude";
+import { claude, POWERFUL_MODEL } from "@/lib/claude";
 import { scanDocument } from "@/lib/emergency";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
+
+const MAX_BYTES = 10 * 1024 * 1024;
 
 const EXTRACT_TOOL = {
   name: "extract_health_doc",
@@ -69,22 +71,59 @@ const EXTRACT_TOOL = {
   },
 };
 
+function assessOcrQuality(extracted: any): "low" | "ok" {
+  if (!extracted) return "low";
+  const fields = [
+    extracted.provider_name,
+    extracted.date,
+    (extracted.diagnoses?.length ?? 0) > 0,
+    (extracted.lab_values?.length ?? 0) > 0,
+    (extracted.medications?.length ?? 0) > 0,
+    extracted.bill_total != null,
+    extracted.patient_responsibility != null,
+    extracted.due_date,
+    (extracted.bill_line_items?.length ?? 0) > 0,
+  ].filter(Boolean).length;
+
+  // Anything classified "other" with <2 substantive fields is almost certainly a
+  // bad photo — too dark, blurry, or cropped. Same if literally nothing extracted.
+  if (extracted.doc_type === "other" && fields < 2) return "low";
+  if (fields === 0) return "low";
+  return "ok";
+}
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const language = (formData.get("language") || "en").toString();
     if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+    if (file.size > MAX_BYTES) {
+      return NextResponse.json(
+        { error: `File is too large. Max ${MAX_BYTES / 1024 / 1024}MB.` },
+        { status: 413 }
+      );
+    }
 
     const bytes = Buffer.from(await file.arrayBuffer()).toString("base64");
     const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
-    const mediaType = isPdf ? "application/pdf" : (file.type || "image/jpeg");
+
+    const ACCEPTED_IMAGE = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
+    const mediaType = isPdf
+      ? "application/pdf"
+      : ACCEPTED_IMAGE.has(file.type)
+        ? file.type
+        : "image/jpeg";
+    if (!isPdf && !ACCEPTED_IMAGE.has(mediaType)) {
+      return NextResponse.json(
+        { error: "Unsupported image format. Please upload a JPG, PNG, or PDF." },
+        { status: 415 }
+      );
+    }
 
     const docContent: any = isPdf
       ? { type: "document", source: { type: "base64", media_type: mediaType, data: bytes } }
       : { type: "image", source: { type: "base64", media_type: mediaType, data: bytes } };
 
-    // Stage 1: extract structured JSON via tool use
     const extractRes = await claude().messages.create({
       model: POWERFUL_MODEL,
       max_tokens: 2048,
@@ -106,53 +145,14 @@ export async function POST(req: Request) {
 
     const toolUse = extractRes.content.find((c: any) => c.type === "tool_use") as any;
     const extracted = toolUse?.input || {};
-
     const emergency = scanDocument(extracted);
-
-    // Stage 2: summarize + recommend
-    const sysPrompt =
-      languageInstruction(language) +
-      ' Always end with the disclaimer: "This is information, not medical advice. Consult a healthcare professional for your specific situation."';
-
-    const userPrompt = `Given the following extracted health document JSON, produce:
-1. A 2-3 sentence summary in plain language.
-2. A "What this means for you" paragraph in plain language.
-3. A "What to do next" ranked list (3-5 items) tailored to the doc_type.
-   - If doc_type is "bill": tell the user they may qualify for charity care if the hospital is nonprofit, suggest negotiating, and link to Feature 4 (Get Help Applying).
-   - If doc_type is "lab_report": explain abnormal flags in plain language and recommend follow-up timing. If any value is critical, surface emergency.
-   - If doc_type is "prescription": mention generic alternatives and link to Feature 3 (Lower Costs).
-   - If doc_type is "visit_summary": generate 3 specific questions to ask at next appointment.
-
-Return your response as JSON with keys: summary, what_this_means, next_steps (array of strings).
-
-Document JSON:
-${JSON.stringify(extracted)}`;
-
-    const sumRes = await claude().messages.create({
-      model: POWERFUL_MODEL,
-      max_tokens: 1500,
-      system: sysPrompt,
-      messages: [{ role: "user", content: userPrompt }],
-    });
-
-    const text = sumRes.content[0]?.type === "text" ? sumRes.content[0].text : "";
-    let parsed: any = { summary: text, what_this_means: "", next_steps: [] };
-    const m = text.match(/\{[\s\S]*\}/);
-    if (m) {
-      try {
-        parsed = JSON.parse(m[0]);
-      } catch {}
-    }
+    const ocr_quality = assessOcrQuality(extracted);
 
     return NextResponse.json({
-      doc: {
-        filename: file.name,
-        extracted,
-        summary: parsed.summary || "",
-        what_this_means: parsed.what_this_means || "",
-        next_steps: parsed.next_steps || [],
-      },
+      filename: file.name,
+      extracted,
       emergency,
+      ocr_quality,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message || "Server error" }, { status: 500 });

@@ -1,8 +1,33 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import hospitals from "@/data/cook-county-hospitals.json";
 import { useT } from "@/lib/i18n";
 import { loadForm } from "@/lib/session";
+
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, " ")
+    .replace(/\b(hospital|medical center|health|memorial|the)\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function findHospital(query: string): string | null {
+  if (!query) return null;
+  const list = hospitals as { name: string }[];
+  const exact = list.find((h) => h.name.toLowerCase() === query.toLowerCase());
+  if (exact) return exact.name;
+  const nq = normalize(query);
+  if (!nq) return null;
+  // Try substring containment in either direction.
+  const partial = list.find((h) => {
+    const nh = normalize(h.name);
+    return nh && (nh.includes(nq) || nq.includes(nh));
+  });
+  return partial?.name || null;
+}
 
 type CharityResp = {
   hospital: {
@@ -51,9 +76,17 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export default function ApplyPage() {
+function ApplyPageInner() {
   const { t, lang } = useT();
-  const [hospitalName, setHospitalName] = useState((hospitals as any[])[0].name);
+  const params = useSearchParams();
+  const queryHospital = params?.get("hospital") || "";
+  const queryAmount = params?.get("amount") || "";
+  const matchedHospital = useMemo(() => findHospital(queryHospital), [queryHospital]);
+  const prefilledFromBill = !!matchedHospital;
+
+  const [hospitalName, setHospitalName] = useState(
+    matchedHospital || (hospitals as any[])[0].name
+  );
   const [householdSize, setHouseholdSize] = useState(1);
   const [annualIncome, setAnnualIncome] = useState<string>("");
   const [name, setName] = useState("");
@@ -71,6 +104,10 @@ export default function ApplyPage() {
       setShowMedicaid(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (matchedHospital) setHospitalName(matchedHospital);
+  }, [matchedHospital]);
 
   async function checkEligibility(e: React.FormEvent) {
     e.preventDefault();
@@ -155,6 +192,15 @@ export default function ApplyPage() {
         <div className="page-kicker">Applications and next steps</div>
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">{t("apply.title")}</h1>
       </div>
+
+      {prefilledFromBill && (
+        <div className="rounded-lg border border-teal-200 bg-teal-50 p-3 text-sm text-teal-900">
+          {t("apply.prefilledFromBill")} <strong>{matchedHospital}</strong>
+          {queryAmount && (
+            <span> — {t("apply.billedAmount")}: <strong>${queryAmount}</strong></span>
+          )}
+        </div>
+      )}
 
       <form onSubmit={checkEligibility} className="ui-card p-5 space-y-4">
         <div>
@@ -364,5 +410,13 @@ export default function ApplyPage() {
 
       <p className="text-xs text-slate-500">{t("disclaimer")}</p>
     </div>
+  );
+}
+
+export default function ApplyPage() {
+  return (
+    <Suspense fallback={<div className="page-shell">…</div>}>
+      <ApplyPageInner />
+    </Suspense>
   );
 }

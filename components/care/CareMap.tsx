@@ -1,7 +1,7 @@
 "use client";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
-import { useEffect } from "react";
+import { useEffect, useId, useState } from "react";
 
 // Fix default icons for Next.js bundling
 const DefaultIcon = L.icon({
@@ -44,9 +44,25 @@ export default function CareMap({
   center: { lat: number; lng: number };
   pins: Pin[];
 }) {
+  const [mounted, setMounted] = useState(false);
+  const mapKey = useId();
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="w-full h-72 sm:h-[420px] rounded-xl overflow-hidden border bg-slate-50" />;
+  }
+
   return (
     <div className="w-full h-72 sm:h-[420px] rounded-xl overflow-hidden border">
-      <MapContainer center={[center.lat, center.lng]} zoom={11} scrollWheelZoom={false}>
+      <MapContainer
+        key={mapKey}
+        center={[center.lat, center.lng]}
+        zoom={11}
+        scrollWheelZoom={false}
+        style={{ width: "100%", height: "100%" }}
+      >
         <TileLayer
           attribution='&copy; OpenStreetMap'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

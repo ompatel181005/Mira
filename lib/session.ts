@@ -2,7 +2,7 @@
 
 export type FormState = {
   zip: string;
-  language: "en" | "es" | "ar";
+  language: string;
   symptoms: string;
   insurance: "none" | "medicaid" | "private" | "medicare" | "";
   circumstances: string[]; // pregnant | children | immigrant | emergency

@@ -5,3 +5,5 @@ node_modules
 chroma_db
 *.log
 .DS_Store
+.claude/
+tsconfig.tsbuildinfo

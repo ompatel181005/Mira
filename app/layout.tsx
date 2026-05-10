@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import FirstVisitModal from "@/components/FirstVisitModal";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "MIRA — Healthcare Navigator",
@@ -17,9 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main className="flex-1">{children}</main>
         <FirstVisitModal />
-        <footer className="text-center text-xs text-slate-500 py-6 px-4">
-          MIRA · This is information, not medical advice. Consult a healthcare professional for your specific situation.
-        </footer>
+        <Footer />
       </body>
     </html>
   );

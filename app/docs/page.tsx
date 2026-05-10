@@ -270,7 +270,7 @@ export default function DocsPage() {
         <EmergencyBanner match={emergency} onDismiss={() => setEmergency(null)} />
       )}
 
-      <div className="rounded-lg border-2 border-dashed border-teal-200 bg-white/85 p-6 sm:p-8 text-center shadow-sm">
+      <div className="rounded-3xl border-2 border-dashed border-medical-100 bg-white/95 p-6 sm:p-8 text-center shadow-soft">
         <input
           ref={fileRef}
           type="file"
@@ -290,7 +290,7 @@ export default function DocsPage() {
           onChange={onUpload}
           disabled={loading}
         />
-        <div className="mx-auto grid h-14 w-14 place-items-center rounded-lg bg-teal-50 text-3xl">
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-medical-50 text-3xl">
           📄
         </div>
         <div className="font-medium mt-1">{t("docs.upload")}</div>
@@ -309,7 +309,7 @@ export default function DocsPage() {
             type="button"
             onClick={() => cameraRef.current?.click()}
             disabled={loading}
-            className="rounded-lg border border-teal-300 bg-white px-4 py-2 text-sm font-medium text-teal-700 hover:bg-teal-50 disabled:opacity-50"
+            className="rounded-2xl border border-medical-100 bg-white px-4 py-2 text-sm font-medium text-medical-700 transition hover:border-medical-600 hover:bg-medical-50 disabled:opacity-50"
           >
             📷 {t("docs.takePhoto")}
           </button>

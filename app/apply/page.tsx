@@ -194,7 +194,7 @@ function ApplyPageInner() {
       </div>
 
       {prefilledFromBill && (
-        <div className="rounded-lg border border-teal-200 bg-teal-50 p-3 text-sm text-teal-900">
+        <div className="rounded-2xl border border-medical-100 bg-medical-50 p-4 text-sm text-medical-700">
           {t("apply.prefilledFromBill")} <strong>{matchedHospital}</strong>
           {queryAmount && (
             <span> — {t("apply.billedAmount")}: <strong>${queryAmount}</strong></span>
@@ -372,7 +372,7 @@ function ApplyPageInner() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-teal-200 bg-teal-50 p-3 text-sm text-teal-950">
+          <div className="rounded-2xl border border-medical-100 bg-medical-50 p-4 text-sm text-slate-800">
             {t("apply.fundraiser.disclaimer")}
           </div>
         </div>

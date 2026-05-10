@@ -97,9 +97,9 @@ export default function ReconciliationCard({
   }
 
   return (
-    <div className="ui-card p-5 space-y-3 border-teal-200 bg-teal-50/40">
+    <div className="ui-card p-5 space-y-3 border-medical-100 bg-medical-50/50">
       <div className="flex items-center gap-2">
-        <span className="rounded-full bg-teal-100 px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-teal-800">
+        <span className="rounded-full bg-medical-100 px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-medical-700">
           {t("docs.combinedView")}
         </span>
         <span className="text-xs text-slate-500">

@@ -123,7 +123,7 @@ export default function CostsPage() {
                         <td className="px-3 text-slate-600">{s.notes}</td>
                         <td className="px-3">
                           {s.url && s.action_label && (
-                            <a href={s.url} target="_blank" rel="noreferrer" className="text-teal-700 underline text-sm font-medium">
+                            <a href={s.url} target="_blank" rel="noreferrer" className="text-medical-700 underline text-sm font-medium">
                               {s.action_label}
                             </a>
                           )}
@@ -146,12 +146,12 @@ export default function CostsPage() {
                     href={check.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="rounded-lg border border-slate-200 bg-white p-3 text-sm shadow-sm transition hover:border-teal-300 hover:bg-teal-50"
+                    className="rounded-2xl border border-slate-200 bg-white p-3 text-sm shadow-sm transition hover:border-medical-600 hover:bg-medical-50"
                   >
                     <span className="block font-semibold text-slate-950">{check.source}</span>
                     <span className="mt-1 block text-xs font-medium uppercase tracking-wide text-slate-500">{check.status}</span>
                     <span className="mt-2 block text-slate-600">{check.notes}</span>
-                    <span className="mt-3 inline-block font-semibold text-teal-700 underline">{check.action_label}</span>
+                    <span className="mt-3 inline-block font-semibold text-medical-700 underline">{check.action_label}</span>
                   </a>
                 ))}
               </div>

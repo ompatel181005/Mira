@@ -21,7 +21,7 @@ export default function CareCard({ r }: { r: CareResult }) {
   const [open, setOpen] = useState(false);
   const dirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address)}`;
   return (
-    <div className="ui-card p-4 transition hover:border-teal-200 hover:shadow-md">
+    <div className="ui-card p-4 transition hover:border-medical-100 hover:shadow-md">
       <div className="flex items-start justify-between gap-2">
         <div>
           <div className="flex items-center gap-2 flex-wrap">

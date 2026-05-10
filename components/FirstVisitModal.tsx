@@ -26,7 +26,7 @@ export default function FirstVisitModal() {
             window.sessionStorage.setItem(KEY, "1");
             setOpen(false);
           }}
-          className="mt-5 w-full py-2.5 rounded-md bg-brand-600 text-white font-medium"
+          className="mt-5 w-full py-3 rounded-2xl bg-medical-600 text-white font-semibold transition hover:bg-medical-700 active:scale-[0.98]"
         >
           {t("privacy.gotIt")}
         </button>

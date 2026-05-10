@@ -30,7 +30,7 @@ export default function QuickChips({
             key={k}
             type="button"
             onClick={() => onAsk(`${text} (${filename})`)}
-            className="rounded-full border border-teal-200 bg-white px-3 py-1 text-xs text-teal-800 hover:border-teal-400 hover:bg-teal-50"
+            className="rounded-full border border-medical-100 bg-white px-3 py-1.5 text-xs font-medium text-medical-700 transition hover:border-medical-600 hover:bg-medical-50"
           >
             {text}
           </button>

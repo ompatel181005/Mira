@@ -71,22 +71,23 @@ export default function CarePage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
+    <div className="page-shell space-y-5">
       <div>
-        <h1 className="text-2xl font-bold">{t("care.header")}</h1>
-        <div className="text-sm text-slate-600">
+        <div className="page-kicker">Nearby options</div>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">{t("care.header")}</h1>
+        <div className="mt-2 text-sm text-slate-600">
           ZIP {zip} · {data?.results.length ?? 0} {t("care.results")}
         </div>
       </div>
 
       {emergency && <EmergencyBanner match={emergency} onDismiss={() => setEmergency(null)} />}
 
-      {loading && <div className="text-slate-500">Loading…</div>}
-      {error && <div className="text-red-600 bg-red-50 border border-red-200 rounded-md p-3">{error}</div>}
+      {loading && <div className="ui-card p-4 text-slate-500">Loading…</div>}
+      {error && <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-red-700">{error}</div>}
 
       {data && (
         <div className="grid lg:grid-cols-5 gap-4">
-          <div className="lg:col-span-3">
+          <div className="ui-card overflow-hidden p-2 lg:col-span-3">
             <CareMap center={data.center} pins={pins as any} />
           </div>
           <div className="lg:col-span-2 space-y-3 max-h-[420px] overflow-auto pr-1">

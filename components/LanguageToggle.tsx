@@ -6,7 +6,7 @@ export default function LanguageToggle() {
   return (
     <select
       aria-label="Language"
-      className="border rounded-md px-2 py-1 text-sm bg-white"
+      className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100"
       value={lang}
       onChange={(e) => setLang(e.target.value as Lang)}
     >

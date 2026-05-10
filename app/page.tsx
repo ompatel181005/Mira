@@ -5,10 +5,11 @@ import { useT } from "@/lib/i18n";
 export default function HomePage() {
   const { t } = useT();
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{t("app.title")}</h1>
-        <p className="mt-3 text-slate-600 max-w-2xl">{t("app.tagline")}</p>
+    <div className="page-shell max-w-5xl">
+      <div className="mb-8 rounded-lg border border-white/70 bg-white/60 p-5 shadow-sm backdrop-blur sm:p-7">
+        <div className="page-kicker">Healthcare help, without the maze</div>
+        <h1 className="page-title mt-2">{t("app.title")}</h1>
+        <p className="page-subtitle">{t("app.tagline")}</p>
       </div>
       <HomeForm />
     </div>

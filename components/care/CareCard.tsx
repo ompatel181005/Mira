@@ -21,17 +21,17 @@ export default function CareCard({ r }: { r: CareResult }) {
   const [open, setOpen] = useState(false);
   const dirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(r.address)}`;
   return (
-    <div className="bg-white border rounded-xl p-4 shadow-sm">
+    <div className="ui-card p-4 transition hover:border-teal-200 hover:shadow-md">
       <div className="flex items-start justify-between gap-2">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-semibold">{r.name}</h3>
             {r.has_er && (
-              <span className="text-[10px] uppercase tracking-wide bg-red-100 text-red-700 px-1.5 py-0.5 rounded">
+              <span className="soft-pill border-red-200 bg-red-50 text-red-700">
                 ER
               </span>
             )}
-            <span className="text-[10px] uppercase tracking-wide bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+            <span className="soft-pill border-slate-200 bg-slate-100 text-slate-600">
               {r.source}
             </span>
           </div>
@@ -73,26 +73,26 @@ export default function CareCard({ r }: { r: CareResult }) {
           href={dirUrl}
           target="_blank"
           rel="noreferrer"
-          className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50"
+          className="secondary-button"
         >
           🧭 {t("care.directions")}
         </a>
         <a
           href={`tel:${r.phone}`}
-          className="text-sm rounded-md bg-brand-600 text-white px-3 py-1.5"
+          className="primary-button px-3 py-2 text-sm"
         >
           📞 {t("care.callNow")}
         </a>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50"
+          className="secondary-button"
         >
           {open ? "▴" : "▾"} {t("care.whyRecommend")}
         </button>
       </div>
 
       {open && (
-        <div className="mt-3 text-sm text-slate-700 bg-slate-50 rounded-md p-3">
+        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
           <ul className="list-disc ms-5 space-y-1">
             {r.source === "FQHC" && (
               <li>

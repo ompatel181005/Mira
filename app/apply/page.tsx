@@ -113,16 +113,19 @@ export default function ApplyPage() {
   }, [result, t]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-5">
-      <h1 className="text-2xl font-bold">{t("apply.title")}</h1>
+    <div className="page-shell max-w-4xl space-y-5">
+      <div>
+        <div className="page-kicker">Applications and next steps</div>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">{t("apply.title")}</h1>
+      </div>
 
-      <form onSubmit={checkEligibility} className="bg-white border rounded-xl p-4 space-y-4">
+      <form onSubmit={checkEligibility} className="ui-card p-5 space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">{t("apply.hospital")}</label>
+          <label className="field-label">{t("apply.hospital")}</label>
           <select
             value={hospitalName}
             onChange={(e) => setHospitalName(e.target.value)}
-            className="w-full border rounded-md px-3 py-2 bg-white"
+            className="field-input"
           >
             {(hospitals as any[]).map((h) => (
               <option key={h.name} value={h.name}>{h.name}</option>
@@ -131,45 +134,45 @@ export default function ApplyPage() {
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">{t("apply.householdSize")}</label>
+            <label className="field-label">{t("apply.householdSize")}</label>
             <input
               type="number"
               min={1}
               max={20}
               value={householdSize}
               onChange={(e) => setHouseholdSize(Number(e.target.value))}
-              className="w-full border rounded-md px-3 py-2"
+              className="field-input"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">{t("apply.income")}</label>
+            <label className="field-label">{t("apply.income")}</label>
             <input
               type="number"
               min={0}
               value={annualIncome}
               onChange={(e) => setAnnualIncome(e.target.value)}
               placeholder="e.g. 24000"
-              className="w-full border rounded-md px-3 py-2"
+              className="field-input"
             />
           </div>
         </div>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">{t("apply.name")}</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} className="w-full border rounded-md px-3 py-2" />
+            <label className="field-label">{t("apply.name")}</label>
+            <input value={name} onChange={(e) => setName(e.target.value)} className="field-input" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">{t("apply.address")}</label>
-            <input value={address} onChange={(e) => setAddress(e.target.value)} className="w-full border rounded-md px-3 py-2" />
+            <label className="field-label">{t("apply.address")}</label>
+            <input value={address} onChange={(e) => setAddress(e.target.value)} className="field-input" />
           </div>
         </div>
-        <button disabled={submitting} className="w-full bg-brand-600 text-white py-2.5 rounded-md font-semibold">
+        <button disabled={submitting} className="primary-button w-full">
           {submitting ? "…" : t("apply.checkEligibility")}
         </button>
       </form>
 
       {result && (
-        <div className="bg-white border rounded-xl p-4 space-y-4">
+        <div className="ui-card p-5 space-y-4">
           <div>
             <div className="font-semibold">{result.hospital.name}</div>
             {result.fpl_percent != null && (
@@ -203,7 +206,7 @@ export default function ApplyPage() {
               <h4 className="text-sm font-semibold">{t("apply.coverLetter")}</h4>
               <CopyButton text={result.cover_letter} />
             </div>
-            <pre className="mt-2 whitespace-pre-wrap bg-slate-50 border rounded-md p-3 text-sm">{result.cover_letter}</pre>
+            <pre className="mt-2 whitespace-pre-wrap rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">{result.cover_letter}</pre>
           </div>
 
           <div>
@@ -211,7 +214,7 @@ export default function ApplyPage() {
               <h4 className="text-sm font-semibold">{t("apply.phoneScript")}</h4>
               <CopyButton text={result.phone_script} />
             </div>
-            <pre className="mt-2 whitespace-pre-wrap bg-slate-50 border rounded-md p-3 text-sm">{result.phone_script}</pre>
+            <pre className="mt-2 whitespace-pre-wrap rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">{result.phone_script}</pre>
             <a href={`tel:${result.hospital.phone}`} className="mt-2 inline-block text-brand-600 underline text-sm">
               📞 Call {result.hospital.phone}
             </a>
@@ -220,13 +223,13 @@ export default function ApplyPage() {
       )}
 
       {showMedicaid && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-2">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-5 shadow-sm space-y-2">
           <h3 className="font-semibold">{t("apply.medicaidEmergency")}</h3>
           <p className="text-sm text-slate-700">
             Illinois Emergency Medicaid covers labor and delivery, ER visits, and dialysis regardless of immigration status.
           </p>
           {!eligibility ? (
-            <button onClick={checkMedicaid} className="bg-amber-700 text-white rounded-md px-4 py-2 text-sm">
+            <button onClick={checkMedicaid} className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-800">
               Check Emergency Medicaid eligibility
             </button>
           ) : (

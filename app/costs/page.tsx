@@ -62,28 +62,31 @@ export default function CostsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-5">
-      <h1 className="text-2xl font-bold">{t("nav.lowerCosts")}</h1>
+    <div className="page-shell max-w-4xl space-y-5">
+      <div>
+        <div className="page-kicker">Medication and bill support</div>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-950">{t("nav.lowerCosts")}</h1>
+      </div>
 
-      <div className="bg-white border rounded-xl p-4">
-        <label className="block text-sm font-medium mb-1">{t("costs.search")}</label>
+      <div className="ui-card p-5">
+        <label className="field-label">{t("costs.search")}</label>
         <p className="text-xs text-slate-500 mb-2">{t("costs.searchHint")}</p>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && search()}
             placeholder="Lipitor, atorvastatin, insulin…"
-            className="flex-1 border rounded-md px-3 py-2"
+            className="field-input flex-1"
           />
-          <button onClick={search} disabled={loading} className="bg-brand-600 text-white rounded-md px-4 py-2">
+          <button onClick={search} disabled={loading} className="primary-button">
             {loading ? "…" : "Search"}
           </button>
         </div>
       </div>
 
       {med && (
-        <div className="bg-white border rounded-xl p-4 space-y-3">
+        <div className="ui-card p-5 space-y-3">
           <div className="flex items-baseline justify-between flex-wrap gap-2">
             <div>
               <div className="font-semibold capitalize">{med.input}</div>
@@ -101,21 +104,21 @@ export default function CostsPage() {
           <h3 className="font-semibold mt-2">{t("costs.priceTable")}</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-xs uppercase text-slate-500 text-left">
+              <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
                 <tr>
-                  <th className="py-2">Source</th>
-                  <th>Price</th>
-                  <th>Notes</th>
-                  <th></th>
+                  <th className="rounded-l-lg px-3 py-2">Source</th>
+                  <th className="px-3">Price</th>
+                  <th className="px-3">Notes</th>
+                  <th className="rounded-r-lg px-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {med.sources.map((s, i) => (
-                  <tr key={i} className="border-t">
-                    <td className="py-2 font-medium">{s.source}</td>
-                    <td>{s.price || "—"}</td>
-                    <td className="text-slate-600">{s.notes}</td>
-                    <td>
+                  <tr key={i} className="border-b border-slate-100 last:border-0">
+                    <td className="px-3 py-3 font-medium">{s.source}</td>
+                    <td className="px-3">{s.price || "—"}</td>
+                    <td className="px-3 text-slate-600">{s.notes}</td>
+                    <td className="px-3">
                       {s.url && s.action_label && (
                         <a href={s.url} target="_blank" rel="noreferrer" className="text-brand-600 underline text-sm">
                           {s.action_label}
@@ -133,7 +136,7 @@ export default function CostsPage() {
               <h3 className="font-semibold">Manufacturer assistance</h3>
               <ul className="space-y-2 mt-2">
                 {med.paps.map((p, i) => (
-                  <li key={i} className="text-sm flex flex-wrap items-center gap-2 bg-emerald-50 border border-emerald-200 rounded p-2">
+                  <li key={i} className="flex flex-wrap items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm">
                     <span className="font-medium">{p.program_name}</span>
                     <span className="text-slate-600">— {p.manufacturer}</span>
                     <span className="text-xs text-slate-500">{p.notes}</span>
@@ -148,9 +151,9 @@ export default function CostsPage() {
         </div>
       )}
 
-      <div className="bg-white border rounded-xl p-4">
+      <div className="ui-card p-5">
         <h2 className="font-semibold">{t("costs.charities")}</h2>
-        <ul className="mt-3 divide-y">
+        <ul className="mt-3 divide-y divide-slate-100">
           {charities.map((c, i) => (
             <li key={i} className="py-3 flex flex-wrap gap-2 items-baseline">
               <div className="min-w-0 flex-1">

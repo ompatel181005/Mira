@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n";
 import { loadForm, saveForm, type FormState } from "@/lib/session";
@@ -7,15 +7,12 @@ import { detectEmergency, type EmergencyMatch } from "@/lib/emergency";
 import EmergencyBanner from "./EmergencyBanner";
 import FeatureCard from "./FeatureCard";
 
-type Feature = "care" | "costs" | "docs" | "apply";
-
 const CIRCS = ["pregnant", "children", "immigrant", "emergency"] as const;
 const INSURANCE = ["none", "medicaid", "private", "medicare"] as const;
 
 export default function HomeForm() {
   const { t, lang } = useT();
   const router = useRouter();
-  const [feature, setFeature] = useState<Feature>("care");
   const [form, setForm] = useState<FormState>({
     zip: "",
     language: "en",
@@ -30,13 +27,6 @@ export default function HomeForm() {
     const loaded = loadForm();
     setForm({ ...loaded, language: lang });
   }, [lang]);
-
-  const ctaLabel = useMemo(() => {
-    if (feature === "care") return t("cta.findCare");
-    if (feature === "costs") return t("cta.lowerCosts");
-    if (feature === "docs") return t("cta.understandDocs");
-    return t("cta.getHelp");
-  }, [feature, t]);
 
   function toggleCirc(c: string) {
     setForm((f) => ({
@@ -76,37 +66,33 @@ export default function HomeForm() {
 
   function proceed() {
     setSubmitting(true);
-    if (feature === "care") router.push("/care");
-    else if (feature === "costs") router.push("/costs");
-    else if (feature === "docs") router.push("/docs");
-    else router.push("/apply");
+    router.push("/care");
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
-      {/* Feature cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <FeatureCard icon="📍" label={t("nav.findCare")} active={feature === "care"} onClick={() => setFeature("care")} />
-        <FeatureCard icon="🧾" label={t("nav.lowerCosts")} active={feature === "costs"} onClick={() => setFeature("costs")} />
-        <FeatureCard icon="📄" label={t("nav.understandDocs")} active={feature === "docs"} onClick={() => setFeature("docs")} />
-        <FeatureCard icon="🪪" label={t("nav.getHelp")} active={feature === "apply"} onClick={() => setFeature("apply")} />
-      </div>
-
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
       {emergency && (
-        <EmergencyBanner
-          match={emergency}
-          onDismiss={() => {
-            setEmergency(null);
-            proceed();
-          }}
-        />
+        <div className="lg:col-span-2">
+          <EmergencyBanner
+            match={emergency}
+            onDismiss={() => {
+              setEmergency(null);
+              proceed();
+            }}
+          />
+        </div>
       )}
 
-      {/* Form panel */}
-      <div className="bg-white border rounded-xl p-5 sm:p-6 space-y-5 shadow-sm">
+      <form onSubmit={onSubmit} className="ui-card p-5 sm:p-6 space-y-5">
+        <div>
+          <div className="page-kicker">Start here for care</div>
+          <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-950">{t("home.careTitle")}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{t("home.careHint")}</p>
+        </div>
+
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">{t("form.zip")} *</label>
+            <label className="field-label">{t("form.zip")} *</label>
             <input
               type="text"
               inputMode="numeric"
@@ -116,11 +102,11 @@ export default function HomeForm() {
               placeholder={t("form.zipPlaceholder")}
               value={form.zip}
               onChange={(e) => setForm({ ...form, zip: e.target.value.replace(/\D/g, "") })}
-              className="w-full border rounded-md px-3 py-2"
+              className="field-input"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">{t("form.language")} *</label>
+            <label className="field-label">{t("form.language")} *</label>
             <select
               value={lang}
               onChange={(e) => {
@@ -128,7 +114,7 @@ export default function HomeForm() {
                 window.sessionStorage.setItem("mira:lang", newLang);
                 window.dispatchEvent(new Event("mira:lang-change"));
               }}
-              className="w-full border rounded-md px-3 py-2 bg-white"
+              className="field-input"
             >
               <option value="en">English</option>
               <option value="es">Español</option>
@@ -138,28 +124,28 @@ export default function HomeForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">{t("form.symptoms")}</label>
+          <label className="field-label">{t("form.symptoms")}</label>
           <textarea
             rows={2}
             placeholder={t("form.symptomsPlaceholder")}
             value={form.symptoms}
             onChange={(e) => setForm({ ...form, symptoms: e.target.value })}
-            className="w-full border rounded-md px-3 py-2"
+            className="field-input min-h-[88px]"
           />
         </div>
 
         <div>
-          <span className="block text-sm font-medium mb-2">{t("form.insurance")} *</span>
+          <span className="field-label">{t("form.insurance")} *</span>
           <div className="flex flex-wrap gap-2">
             {INSURANCE.map((ins) => (
               <button
                 type="button"
                 key={ins}
                 onClick={() => setForm({ ...form, insurance: ins })}
-                className={`rounded-full border px-3 py-1.5 text-sm ${
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                   form.insurance === ins
-                    ? "bg-brand-600 text-white border-brand-600"
-                    : "bg-white border-slate-300"
+                    ? "bg-teal-700 text-white border-teal-700 shadow-sm"
+                    : "bg-white border-slate-300 text-slate-700 hover:border-teal-300 hover:bg-teal-50"
                 }`}
               >
                 {t("form.insurance." + ins)}
@@ -169,17 +155,17 @@ export default function HomeForm() {
         </div>
 
         <div>
-          <span className="block text-sm font-medium mb-2">{t("form.circumstances")}</span>
+          <span className="field-label">{t("form.circumstances")}</span>
           <div className="flex flex-wrap gap-2">
             {CIRCS.map((c) => (
               <button
                 type="button"
                 key={c}
                 onClick={() => toggleCirc(c)}
-                className={`rounded-full border px-3 py-1.5 text-sm ${
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                   form.circumstances.includes(c)
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white border-slate-300"
+                    ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                    : "bg-white border-slate-300 text-slate-700 hover:border-slate-400 hover:bg-slate-50"
                 }`}
               >
                 {t("form.circ." + c)}
@@ -191,11 +177,39 @@ export default function HomeForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-3 rounded-md bg-brand-600 text-white font-semibold hover:bg-brand-700 disabled:opacity-60"
+          className="primary-button w-full py-3"
         >
-          {ctaLabel}
+          {t("cta.findCare")}
         </button>
-      </div>
-    </form>
+      </form>
+
+      <aside className="space-y-3">
+        <div className="ui-card p-5">
+          <h2 className="text-lg font-semibold text-slate-950">{t("home.moreTitle")}</h2>
+          <p className="mt-1 text-sm leading-6 text-slate-600">{t("home.moreHint")}</p>
+        </div>
+        <FeatureCard
+          icon="🧾"
+          label={t("nav.lowerCosts")}
+          description={t("home.lowerCostsHint")}
+          active={false}
+          onClick={() => router.push("/costs")}
+        />
+        <FeatureCard
+          icon="📄"
+          label={t("nav.understandDocs")}
+          description={t("home.docsHint")}
+          active={false}
+          onClick={() => router.push("/docs")}
+        />
+        <FeatureCard
+          icon="🪪"
+          label={t("nav.getHelp")}
+          description={t("home.applyHint")}
+          active={false}
+          onClick={() => router.push("/apply")}
+        />
+      </aside>
+    </div>
   );
 }
